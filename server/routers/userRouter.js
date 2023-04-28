@@ -1,19 +1,17 @@
 const Router = require('express');
 
 const router = new Router();
-const controller = require('../controllers/authController');
-const authMiddleware = require('../middlewares/authMiddleware');
+const controller = require('../controllers/userController');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const validateRequest = require('../middlewares/validateRequest');
-
-const loginValidator = require('../validators/authValidators/loginValidator');
+const loginValidator = require('../validators/userValidators/loginValidator');
 
 // User registration
 router.post(
   '/registration',
   loginValidator,
   validateRequest,
-  controller.registation,
+  controller.registration,
 );
 
 // User login

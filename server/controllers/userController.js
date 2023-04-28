@@ -17,7 +17,7 @@ const generateAccessToken = (id, roles) => {
   return jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
 };
 class authController {
-  async registation(req, res) {
+  async registration(req, res) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -58,9 +58,12 @@ class authController {
       if (!validPassword) {
         return res.status(400).json({ message: 'Введен неверный пароль' });
       }
+      // eslint-disable-next-line no-underscore-dangle
       const token = generateAccessToken(user._id, user.roles);
       res.json({ user, token });
-    } catch (e) {}
+    } catch (e) {
+      return res.status(500).json({ message: 'Ошибка авторизации' });
+    }
   }
 
   async getUsers(req, res) {
@@ -73,4 +76,4 @@ class authController {
   }
 }
 
-module.exports = new authController();
+module.exports = new userController();
