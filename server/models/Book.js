@@ -8,6 +8,14 @@ const Book = new Schema({
   volume: {
     type: String,
   },
+  cover: {
+    type: String,
+  },
+  isSingle: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
 });
 
 module.exports = model('Book', Book);

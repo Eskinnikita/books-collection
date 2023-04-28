@@ -3,15 +3,22 @@ const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// entities routers
+const userRouter = require('./routers/userRouter');
+
 require('dotenv').config();
 
+// setup server middlewares
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 4000;
+// apply entities routers
+app.use('/users', userRouter);
 
+// setup server connection
+const port = process.env.PORT || 4000;
 const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PASS;
 
