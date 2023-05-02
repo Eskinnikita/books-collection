@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
 
-const loginValidator = [
+const registrationValidator = [
   body('email')
     .isEmail()
     .withMessage('Введите настоящую почту')
@@ -16,4 +16,4 @@ const loginValidator = [
     .withMessage('Поле не может быть пустым'),
 ];
 
-module.exports = loginValidator;
+module.exports = registrationValidator;

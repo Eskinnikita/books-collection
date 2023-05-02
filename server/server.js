@@ -3,9 +3,6 @@ const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// Entities routers
-const userRouter = require('./routers/userRouter');
-
 require('dotenv').config();
 
 // Setup server middlewares
@@ -13,6 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
+
+// Entities routers
+const userRouter = require('./routers/userRouter');
 
 // Apply entities routers
 app.use('/users', userRouter);

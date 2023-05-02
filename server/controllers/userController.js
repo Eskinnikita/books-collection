@@ -16,7 +16,7 @@ const generateAccessToken = (id, roles) => {
   };
   return jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
 };
-class authController {
+class userController {
   async registration(req, res) {
     try {
       const errors = validationResult(req);
@@ -30,6 +30,7 @@ class authController {
       if (candidate) {
         return res.status(400).json({ message: 'Пользователь уже существует' });
       }
+
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: 'USER' });
       const user = new User({
@@ -38,6 +39,7 @@ class authController {
         password: hashPassword,
         roles: [userRole.value],
       });
+
       await user.save();
       return res.json({ message: 'Пользователь успешно зарегистрирован' });
     } catch (e) {

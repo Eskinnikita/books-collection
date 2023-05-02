@@ -5,11 +5,12 @@ const controller = require('../controllers/userController');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const validateRequest = require('../middlewares/validateRequest');
 const loginValidator = require('../validators/userValidators/loginValidator');
+const regValidator = require('../validators/userValidators/regValidator');
 
 // User registration
 router.post(
   '/registration',
-  loginValidator,
+  regValidator,
   validateRequest,
   controller.registration,
 );
