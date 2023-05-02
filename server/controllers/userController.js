@@ -28,7 +28,7 @@ class userController {
       const { email, username, password } = req.body;
       const candidate = await User.findOne({ email });
       if (candidate) {
-        return res.status(400).json({ message: 'Пользователь уже существует' });
+        return res.status(404).json({ message: 'Пользователь уже существует' });
       }
 
       const hashPassword = bcrypt.hashSync(password, 7);
@@ -53,12 +53,12 @@ class userController {
       const user = await User.findOne({ email });
       if (!user) {
         return res
-          .status(400)
+          .status(404)
           .json({ message: `Пользователь с почтой ${email} не найден` });
       }
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
-        return res.status(400).json({ message: 'Введен неверный пароль' });
+        return res.status(404).json({ message: 'Введен неверный пароль' });
       }
 
       // eslint-disable-next-line no-underscore-dangle
