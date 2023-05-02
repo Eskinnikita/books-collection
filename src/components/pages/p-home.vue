@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import Book from '@/components/blocks/b-book.vue';
+import Book from '@/components/blocks/entities/b-book.vue';
 
 const books = [
   {

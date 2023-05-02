@@ -60,6 +60,7 @@ class userController {
       if (!validPassword) {
         return res.status(400).json({ message: 'Введен неверный пароль' });
       }
+
       // eslint-disable-next-line no-underscore-dangle
       const token = generateAccessToken(user._id, user.roles);
       res.json({ user, token });

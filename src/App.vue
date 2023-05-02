@@ -1,26 +1,18 @@
 <template>
+  <b-header/>
+  <b-login-modal/>
   <router-view/>
 </template>
 
+<script setup>
+import BHeader from '@/components/blocks/global/b-header.vue';
+import BLoginModal from '@/components/blocks/modals/b-login-modal.vue';
+</script>
+
 <style lang="scss">
+@import "src/assets/scss/reset";
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+  font-family: v-mono, sans-serif;
 }
 </style>
