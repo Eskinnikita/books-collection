@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useAppStore } from '@/stores/app';
 import BLoginForm from '@/components/blocks/global/b-login-form.vue';
 import BRegForm from '@/components/blocks/global/b-reg-form.vue';
@@ -25,6 +25,15 @@ const formType = ref('login');
 const changeFormType = (type) => {
   formType.value = type;
 };
+
+// change modal type to login on modal close
+watch(() => appStore.isLogModalShown, (newVal) => {
+  if (newVal === false) {
+    setTimeout(() => {
+      formType.value = 'login';
+    }, 200);
+  }
+});
 
 const bodyStyle = {
   width: '600px',
