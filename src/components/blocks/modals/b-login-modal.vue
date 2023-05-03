@@ -16,8 +16,8 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { useAppStore } from '@/stores/app';
-import BLoginForm from '@/components/blocks/global/b-login-form.vue';
-import BRegForm from '@/components/blocks/global/b-reg-form.vue';
+import BLoginForm from '@/components/blocks/global/forms/b-login-form.vue';
+import BRegForm from '@/components/blocks/global/forms/b-reg-form.vue';
 
 const appStore = useAppStore();
 

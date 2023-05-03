@@ -7,6 +7,11 @@ export const useUserStore = defineStore({
     user: null,
     token: localStorage.getItem('user-token') || '',
   }),
+  getters: {
+    canEdit() {
+      return this.user && this.token;
+    },
+  },
   actions: {
     async loginUser(inData) {
       try {

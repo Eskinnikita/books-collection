@@ -10,7 +10,7 @@
     <n-form-item path="username" label="Отображаемое имя">
       <n-input
         v-model:value="formValue.username"
-        placeholder="Вася пупкин"
+        placeholder="Вася Пупкин"
         type="text"
       />
     </n-form-item>
