@@ -2,8 +2,6 @@ const { body } = require('express-validator');
 
 const registrationValidator = [
   body('email')
-    .isEmail()
-    .withMessage('Введите настоящую почту')
     .notEmpty()
     .withMessage('Поле не может быть пустым'),
   body('username')

@@ -30,6 +30,7 @@
 
 <script setup>
 import { defineEmits, ref } from 'vue';
+import { validatePassLength, validateEmailFormat } from '@/helpers/validators';
 import { useAppStore } from '@/stores/app';
 import { useUserStore } from '@/stores/user';
 
@@ -43,18 +44,6 @@ const formValue = ref({
   email: '',
   password: '',
 });
-
-function validatePassLength(rule, value) {
-  return value.trim().length && value.length >= 6 && value.length <= 10;
-}
-
-function validateEmailFormat(rule, value) {
-  const emailRegExp = /^(?![^\w"])("(.*?)"|[\w.,_%+\-/!;]+)(\.[\w.,_%+\-/!;]+)*@[a-zA-Z0-9.[\]\-:]+$/;
-  if (value.trim().length) {
-    return emailRegExp.test(value);
-  }
-  return true;
-}
 
 // login form validation rules
 const valRules = {
@@ -78,7 +67,7 @@ const valRules = {
     },
     {
       validator: validatePassLength,
-      message: 'Длина пароля от 5 до 10 символов!',
+      message: 'Длина пароля от 4 до 10 символов!',
       trigger: ['blur', 'input'],
     },
   ],

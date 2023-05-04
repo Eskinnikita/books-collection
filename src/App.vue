@@ -1,6 +1,6 @@
 <template>
     <n-config-provider :theme-overrides="themeOverrides">
-      <n-message-provider>
+      <n-message-provider placement="top-right">
         <b-header/>
         <b-login-modal/>
         <router-view/>

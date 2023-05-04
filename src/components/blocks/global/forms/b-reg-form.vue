@@ -1,5 +1,5 @@
 <template>
-  <n-form ref="loginForm" :model="formValue" :rules="valRules">
+  <n-form class="b-reg-modal" ref="formRef" :model="formValue" :rules="valRules">
     <n-form-item path="email" label="Электронная почта">
       <n-input
         v-model:value="formValue.email"
@@ -21,7 +21,7 @@
         type="password"
       />
     </n-form-item>
-    <n-space justify="space-between" class="b-login-modal__controls">
+    <n-space justify="space-between" class="b-reg-modal__controls">
       <n-button type="info" @click="sendRegData">
         Создать аккаунт
       </n-button>
@@ -34,6 +34,7 @@
 
 <script setup>
 import { ref, defineEmits } from 'vue';
+import { validatePassLength, validateEmailFormat } from '@/helpers/validators';
 import { useAppStore } from '@/stores/app';
 import { useUserStore } from '@/stores/user';
 
@@ -42,30 +43,45 @@ defineEmits(['change-modal-form']);
 const appStore = useAppStore();
 const userStore = useUserStore();
 
-// login form setup
+// reg form setup
+const formRef = ref(null);
 const formValue = ref({
   username: '',
   email: '',
   password: '',
 });
 
-// login form validation rules
+// reg form validation rules
 const valRules = {
+  email: [
+    {
+      required: true,
+      message: 'Введите вашу почту!',
+      trigger: ['blur', 'input'],
+    },
+    {
+      validator: validateEmailFormat,
+      message: 'Введите корректный адрес почты!',
+      trigger: ['blur', 'input'],
+    },
+  ],
   username: {
     required: true,
     message: 'Введите ваше имя!',
     trigger: ['blur', 'input'],
   },
-  email: {
-    required: true,
-    message: 'Введите вашу почту!',
-    trigger: ['blur', 'input'],
-  },
-  password: {
-    required: true,
-    message: 'Введите пароль!',
-    trigger: ['blur', 'input'],
-  },
+  password: [
+    {
+      required: true,
+      message: 'Введите пароль!',
+      trigger: ['blur', 'input'],
+    },
+    {
+      validator: validatePassLength,
+      message: 'Длина пароля от 4 до 10 символов!',
+      trigger: ['blur', 'input'],
+    },
+  ],
 };
 
 // reset form data on login success
@@ -78,10 +94,23 @@ const resetForm = () => {
 };
 
 const sendRegData = async () => {
-  userStore.regUser(formValue.value)
-    .then(() => {
-      appStore.toggleLoginModal(false);
-      resetForm();
-    });
+  formRef.value?.validate((errors) => {
+    if (!errors) {
+      userStore.regUser(formValue.value)
+        .then(() => {
+          appStore.toggleLoginModal(false);
+          resetForm();
+        })
+        .catch(() => {});
+    }
+  });
 };
 </script>
+
+<style lang="scss" scoped>
+.b-reg-modal {
+  &__controls {
+    margin-top: 20px;
+  }
+}
+</style>
