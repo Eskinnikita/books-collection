@@ -20,8 +20,8 @@
     :bordered="false"
     size="huge"
   >
-    <n-form ref="loginForm">
-      <n-form-item label="Серия">
+    <n-form ref="formRef" :rules="valRules">
+      <n-form-item path="series_id" label="Серия">
         <n-select
           v-model:value="book.series_id"
           filterable
@@ -33,7 +33,7 @@
           Внесерийное издание (нет номера тома, есть подзаголовок)
         </n-checkbox>
       </n-form-item>
-      <n-form-item label="Подзаголовок">
+      <n-form-item path="subtitle" label="Подзаголовок">
         <n-input
           v-model:value="book.subtitle"
           placeholder="Отображается через : после названия серии"
@@ -44,6 +44,7 @@
           v-model:value="book.volume"
           :validator="volumeNumValidator"
           placeholder="0,1,2,3,4"
+          path="volume"
           clearable />
       </n-form-item>
       <n-form-item label="Обложка">
@@ -70,6 +71,7 @@ import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
 
+const formRef = ref(null);
 const showModal = ref(false);
 
 const book = ref({
@@ -80,6 +82,17 @@ const book = ref({
   cover: '',
 });
 
+const valRules = {
+  series_id: {
+    required: true,
+    message: 'Укажите серию, либо добавьте новую',
+  },
+  volume: {
+    required: book.value.isSingle,
+    message: 'Укажите порядковый номер издания',
+  },
+};
+
 const volumeNumValidator = (x) => x > 0;
 
 const bodyStyle = {
@@ -87,7 +100,10 @@ const bodyStyle = {
 };
 
 const addBook = () => {
-
+  formRef.value?.validate(() => {
+    // if (!errors) {
+    // }
+  });
 };
 
 </script>
