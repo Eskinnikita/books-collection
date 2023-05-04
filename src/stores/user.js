@@ -16,11 +16,13 @@ export const useUserStore = defineStore({
     async loginUser(inData) {
       try {
         const userData = await api.post('/users/login', inData);
+        console.log('USERDATA', userData);
         this.user = userData.user;
         this.token = userData.token;
         localStorage.setItem('user-token', userData.token);
       } catch (e) {
-        console.log(e);
+        window.$message.error(e.message);
+        throw Error(e);
       }
     },
     async regUser(inData) {
@@ -28,7 +30,7 @@ export const useUserStore = defineStore({
         await api.post('/users/registration', inData);
         await this.loginUser(inData);
       } catch (e) {
-        console.log(e);
+        throw Error(e);
       }
     },
     logout() {

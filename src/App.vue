@@ -1,13 +1,15 @@
 <template>
-  <n-config-provider :theme-overrides="themeOverrides">
-    <b-header/>
-    <b-login-modal/>
-    <router-view/>
-  </n-config-provider>
+    <n-config-provider :theme-overrides="themeOverrides">
+      <n-message-provider>
+        <b-header/>
+        <b-login-modal/>
+        <router-view/>
+      </n-message-provider>
+    </n-config-provider>
 </template>
 
 <script setup>
-import { NConfigProvider } from 'naive-ui';
+import { NConfigProvider, NMessageProvider } from 'naive-ui';
 import BHeader from '@/components/blocks/global/b-header.vue';
 import BLoginModal from '@/components/blocks/modals/b-login-modal.vue';
 

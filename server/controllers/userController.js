@@ -16,67 +16,70 @@ const generateAccessToken = (id, roles) => {
   };
   return jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
 };
-class userController {
-  async registration(req, res) {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res
-          .status(400)
-          .json({ message: 'Ошибка при регистрации', errors });
-      }
-      const { email, username, password } = req.body;
-      const candidate = await User.findOne({ email });
-      if (candidate) {
-        return res.status(404).json({ message: 'Пользователь уже существует' });
-      }
 
-      const hashPassword = bcrypt.hashSync(password, 7);
-      const userRole = await Role.findOne({ value: 'USER' });
-      const user = new User({
-        email,
-        username,
-        password: hashPassword,
-        roles: [userRole.value],
-      });
-
-      await user.save();
-      return res.json({ message: 'Пользователь успешно зарегистрирован' });
-    } catch (e) {
-      return res.status(500).json({ message: 'Ошибка сервера' });
+const registration = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: 'Ошибка при регистрации', errors });
     }
-  }
-
-  async login(req, res) {
-    try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: `Пользователь с почтой ${email} не найден` });
-      }
-      const validPassword = bcrypt.compareSync(password, user.password);
-      if (!validPassword) {
-        return res.status(404).json({ message: 'Введен неверный пароль' });
-      }
-
-      // eslint-disable-next-line no-underscore-dangle
-      const token = generateAccessToken(user._id, user.roles);
-      res.json({ user, token });
-    } catch (e) {
-      return res.status(500).json({ message: 'Ошибка авторизации' });
+    const { email, username, password } = req.body;
+    const candidate = await User.findOne({ email });
+    if (candidate) {
+      return res.status(400).json({ message: 'Пользователь уже существует' });
     }
-  }
 
-  async getUsers(req, res) {
-    try {
-      const users = await User.find();
-      res.json(users);
-    } catch (e) {
-      return res.status(500).json({ message: 'Ошибка сервера' });
+    const hashPassword = bcrypt.hashSync(password, 7);
+    const userRole = await Role.findOne({ value: 'USER' });
+    const user = new User({
+      email,
+      username,
+      password: hashPassword,
+      roles: [userRole.value],
+    });
+
+    await user.save();
+    return res.json({ message: 'Пользователь успешно зарегистрирован' });
+  } catch (e) {
+    return res.status(500).json({ message: 'Ошибка сервера' });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: `Пользователь с почтой ${email} не найден` });
     }
-  }
-}
+    const validPassword = bcrypt.compareSync(password, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Введен неверный пароль' });
+    }
 
-module.exports = new userController();
+    // eslint-disable-next-line no-underscore-dangle
+    const token = generateAccessToken(user._id, user.roles);
+    return res.json({ user, token });
+  } catch (e) {
+    return res.status(500).json({ message: 'Ошибка авторизации' });
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    return res.json(users);
+  } catch (e) {
+    return res.status(500).json({ message: 'Ошибка сервера' });
+  }
+};
+
+module.exports = {
+  login,
+  registration,
+  getUsers,
+};

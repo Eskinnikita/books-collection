@@ -17,8 +17,11 @@
 </template>
 
 <script setup>
+import { useMessage } from 'naive-ui';
 import { useAppStore } from '@/stores/app';
 import { useUserStore } from '@/stores/user';
+
+window.$message = useMessage();
 
 const appStore = useAppStore();
 const userStore = useUserStore();
