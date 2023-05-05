@@ -13,7 +13,15 @@ const validateEmailFormat = (rule, value) => {
   return true;
 };
 
+const validateSeriesFormat = (rule, value) => {
+  if (value !== null) {
+    return value > 0 && value % 0.5 === 0;
+  }
+  return true;
+};
+
 export {
   validatePassLength,
   validateEmailFormat,
+  validateSeriesFormat,
 };

@@ -29,6 +29,7 @@ const userStore = useUserStore();
 
 <style lang="scss" scoped>
 .header {
+  z-index: 100000;
   position: fixed;
   top: 0;
   left: 0;
