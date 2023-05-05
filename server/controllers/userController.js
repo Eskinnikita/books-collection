@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
 const Role = require('../models/Role');
 const User = require('../models/User');
 
@@ -19,12 +18,6 @@ const generateAccessToken = (id, roles) => {
 
 const registration = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res
-        .status(400)
-        .json({ message: 'Ошибка при регистрации', errors });
-    }
     const { email, username, password } = req.body;
     const candidate = await User.findOne({ email });
     if (candidate) {

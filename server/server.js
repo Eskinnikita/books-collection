@@ -13,9 +13,11 @@ app.use(bodyparser.urlencoded({ extended: true }));
 
 // Entities routers
 const userRouter = require('./routers/userRouter');
+const pubRouter = require('./routers/pubRouter');
 
 // Apply entities routers
 app.use('/users', userRouter);
+app.use('/pubs', pubRouter);
 
 // Setup server connection
 const port = process.env.PORT || 4000;

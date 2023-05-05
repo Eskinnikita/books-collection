@@ -20,8 +20,11 @@
 
 <script setup>
 import { defineEmits, ref } from 'vue';
+import { useBookStore } from '@/stores/book';
 
 const emits = defineEmits(['close-add-item-form']);
+
+const bookStore = useBookStore();
 
 // reg form setup
 const formRef = ref(null);
@@ -48,6 +51,11 @@ const resetForm = () => {
 const sendRegData = async () => {
   formRef.value?.validate((errors) => {
     if (!errors) {
+      bookStore.addPublisher(formValue.value)
+        .then(() => {
+          emits('close-add-item-form');
+        })
+        .catch(() => {});
       resetForm();
     }
   });
@@ -55,9 +63,7 @@ const sendRegData = async () => {
 
 const closeAddItemForm = () => {
   emits('close-add-item-form');
-  formValue.value = {
-    name: '',
-  };
+  resetForm();
 };
 </script>
 

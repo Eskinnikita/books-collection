@@ -31,7 +31,7 @@
       </n-radio-group>
     </n-form-item>
     <n-space justify="flex-start">
-      <n-button type="info" @click="sendRegData">
+      <n-button type="info" @click="sendData">
         Добавить
       </n-button>
       <n-button type="text" @click="closeAddItemForm">
@@ -101,7 +101,7 @@ const resetForm = () => {
   };
 };
 
-const sendRegData = async () => {
+const sendData = async () => {
   formRef.value?.validate((errors) => {
     if (!errors) {
       resetForm();
