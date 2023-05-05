@@ -17,5 +17,6 @@ module.exports = {
     'no-param-reassign': 0,
     'import/prefer-default-export': 'off',
     'linebreak-style': 0,
+    'no-underscore-dangle': 0,
   },
 };

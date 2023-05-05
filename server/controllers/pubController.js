@@ -16,6 +16,16 @@ const addPublisher = async (req, res) => {
   }
 };
 
+const getPublishers = async (req, res) => {
+  try {
+    const publishers = await Publisher.find();
+    return res.json({ result: publishers });
+  } catch (e) {
+    return res.status(500).json({ message: 'Ошибка сервера' });
+  }
+};
+
 module.exports = {
   addPublisher,
+  getPublishers,
 };

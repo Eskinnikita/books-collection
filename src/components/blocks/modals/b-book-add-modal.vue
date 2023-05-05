@@ -25,7 +25,8 @@
       <!-- Publisher select -->
       <n-form-item v-if="!showForm.pub" path="publisher_id" label="Издатель">
         <n-select
-          v-model:value="book.publisher_id"
+          v-model:value="publisherId"
+          :options="publishers"
           filterable
           placeholder="Азбука-Аттикус, Истари Комикс и т.д."
         />
@@ -39,6 +40,7 @@
       </n-form-item>
       <b-publisher-form
         @close-add-item-form="toggleAddForm('pub', false)"
+        @on-pub-add="onNewPubAdded"
         class="b-book-modal__add-item"
         v-else
       />
@@ -104,8 +106,10 @@ import { Add as AddIcon } from '@vicons/ionicons5';
 import BPublisherForm from '@/components/blocks/global/forms/b-publisher-form.vue';
 import BSeriesForm from '@/components/blocks/global/forms/b-series-form.vue';
 import { useUserStore } from '@/stores/user';
+import { useBookStore } from '@/stores/book';
 
 const userStore = useUserStore();
+const bookStore = useBookStore();
 
 const formRef = ref(null);
 const showModal = ref(false);
@@ -155,9 +159,25 @@ const clearForm = () => {
   };
 };
 
+const publishers = ref([]);
+const publisherId = ref('');
+
+const onNewPubAdded = (pub) => {
+  publishers.value.push({ label: pub.name, value: pub._id });
+  publisherId.value = pub._id;
+};
+
+const getPublishers = async () => {
+  await bookStore.getPublishers();
+  publishers.value = bookStore.publishers.map((el) => ({ label: el.name, value: el._id }));
+  publisherId.value = publishers.value[0].value;
+};
+
 watch(showModal, (newVal) => {
   if (newVal === false) {
     clearForm();
+  } else {
+    getPublishers();
   }
 });
 

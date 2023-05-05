@@ -12,4 +12,7 @@ router.post(
   validateRequest,
   controller.addPublisher,
 );
+
+// Get all publishers
+router.get('/', controller.getPublishers);
 module.exports = router;

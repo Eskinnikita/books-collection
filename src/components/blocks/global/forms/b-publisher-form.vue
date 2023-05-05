@@ -22,7 +22,7 @@
 import { defineEmits, ref } from 'vue';
 import { useBookStore } from '@/stores/book';
 
-const emits = defineEmits(['close-add-item-form']);
+const emits = defineEmits(['close-add-item-form', 'on-pub-add']);
 
 const bookStore = useBookStore();
 
@@ -52,11 +52,12 @@ const sendRegData = async () => {
   formRef.value?.validate((errors) => {
     if (!errors) {
       bookStore.addPublisher(formValue.value)
-        .then(() => {
+        .then((res) => {
+          if (res) emits('on-pub-add', res);
           emits('close-add-item-form');
+          resetForm();
         })
         .catch(() => {});
-      resetForm();
     }
   });
 };

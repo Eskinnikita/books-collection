@@ -8,6 +8,7 @@ export const useBookStore = defineStore({
     series: [],
   }),
   getters: {
+
   },
   actions: {
     async addPublisher(inData) {
@@ -15,6 +16,19 @@ export const useBookStore = defineStore({
         const response = await api.post('/pubs', inData);
         if (response?.result && response?.message) {
           window.$message.success(response.message);
+          return response.result;
+        }
+        return null;
+      } catch (e) {
+        window.$message.error(e.message);
+        throw Error(e);
+      }
+    },
+    async getPublishers() {
+      try {
+        const response = await api.get('/pubs');
+        if (response?.result) {
+          this.publishers = response.result;
         }
       } catch (e) {
         window.$message.error(e.message);
