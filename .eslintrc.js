@@ -16,5 +16,6 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-param-reassign': 0,
     'import/prefer-default-export': 'off',
+    'linebreak-style': 0,
   },
 };
