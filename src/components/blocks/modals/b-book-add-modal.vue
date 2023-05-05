@@ -48,6 +48,7 @@
       <n-form-item v-if="!showForm.series" path="series_id" label="Серия">
         <n-select
           v-model:value="book.series_id"
+          :options="series"
           filterable
           placeholder="Наруто, Bleach, One Piece"
         />
@@ -124,6 +125,7 @@ const toggleAddForm = (type, value) => {
 };
 
 const book = ref({
+  series_id: '',
   isSingle: false,
   subtitle: '',
   volume: 1,
@@ -159,6 +161,14 @@ const clearForm = () => {
   };
 };
 
+const series = ref([]);
+
+const getSeriesByPublisher = async (id) => {
+  await bookStore.getSeriesByPublisher(id);
+  series.value = bookStore.series.map((el) => ({ label: el.name, value: el._id }));
+  book.value.series_id = series.value.length ? series.value[0].value : '';
+};
+
 const publishers = ref([]);
 const publisherId = ref('');
 
@@ -167,10 +177,16 @@ const onNewPubAdded = (pub) => {
   publisherId.value = pub._id;
 };
 
+watch(publisherId, (newVal) => {
+  getSeriesByPublisher(newVal);
+});
+
 const getPublishers = async () => {
   await bookStore.getPublishers();
   publishers.value = bookStore.publishers.map((el) => ({ label: el.name, value: el._id }));
   publisherId.value = publishers.value[0].value;
+
+  await getSeriesByPublisher(publisherId.value);
 };
 
 watch(showModal, (newVal) => {

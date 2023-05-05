@@ -19,7 +19,7 @@ const seriesRouter = require('./routers/seriesRouter');
 // Apply entities routers
 app.use('/users', userRouter);
 app.use('/pubs', pubRouter);
-app.use('/serieses', seriesRouter);
+app.use('/series', seriesRouter);
 
 // Setup server connection
 const port = process.env.PORT || 4000;

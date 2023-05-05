@@ -35,5 +35,16 @@ export const useBookStore = defineStore({
         throw Error(e);
       }
     },
+    async getSeriesByPublisher(id) {
+      try {
+        const response = await api.get(`/series/${id}`);
+        if (response?.result) {
+          this.series = response.result;
+        }
+      } catch (e) {
+        window.$message.error(e.message);
+        throw Error(e);
+      }
+    },
   },
 });

@@ -18,17 +18,17 @@ const addSeries = async (req, res) => {
 
 const getSeriesByPublisher = async (req, res) => {
   try {
-    const serieses = await Series.find({ publisher_id: req.params.id });
-    return res.json({ result: serieses });
+    const series = await Series.find({ publisher_id: req.params.id });
+    return res.json({ result: series });
   } catch (e) {
     return res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
 
-const getSerieses = async (req, res) => {
+const getSeries = async (req, res) => {
   try {
-    const serieses = await Series.find();
-    return res.json({ result: serieses });
+    const series = await Series.find();
+    return res.json({ result: series });
   } catch (e) {
     return res.status(500).json({ message: 'Ошибка сервера' });
   }
@@ -36,6 +36,6 @@ const getSerieses = async (req, res) => {
 
 module.exports = {
   addSeries,
-  getSerieses,
+  getSeries,
   getSeriesByPublisher,
 };

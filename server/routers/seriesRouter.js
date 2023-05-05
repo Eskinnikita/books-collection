@@ -14,7 +14,7 @@ router.post(
 );
 
 // Get all publishers
-router.get('/', controller.getSerieses);
+router.get('/', controller.getSeries);
 
 // Get series by publisher
 router.get('/:id', controller.getSeriesByPublisher);
