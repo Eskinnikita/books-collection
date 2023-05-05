@@ -44,8 +44,10 @@
 <script setup>
 import { ref, defineEmits } from 'vue';
 import { validateSeriesFormat } from '@/helpers/validators';
+import { useBookStore } from '@/stores/book';
 
-const emits = defineEmits(['close-add-item-form']);
+const emits = defineEmits(['close-add-item-form', 'on-ser-add']);
+const bookStore = useBookStore();
 
 const types = [
   {
@@ -104,7 +106,13 @@ const resetForm = () => {
 const sendData = async () => {
   formRef.value?.validate((errors) => {
     if (!errors) {
-      resetForm();
+      bookStore.addSeries(formValue.value)
+        .then((res) => {
+          if (res) emits('on-ser-add', res);
+          emits('close-add-item-form');
+          resetForm();
+        })
+        .catch(() => {});
     }
   });
 };

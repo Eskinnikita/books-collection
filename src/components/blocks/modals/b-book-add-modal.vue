@@ -62,6 +62,7 @@
       </n-form-item>
       <b-series-form
         @close-add-item-form="toggleAddForm('series', false)"
+        @on-ser-add="onNewSeriesAdd"
         class="b-book-modal__add-item"
         v-else
       />
@@ -162,6 +163,11 @@ const clearForm = () => {
 };
 
 const series = ref([]);
+
+const onNewSeriesAdd = (ser) => {
+  series.value.push({ label: ser.name, value: ser._id });
+  book.value.series_id = ser._id;
+};
 
 const getSeriesByPublisher = async (id) => {
   await bookStore.getSeriesByPublisher(id);
