@@ -32,6 +32,7 @@
         />
         <n-button
           @click="toggleAddForm('pub', true)"
+          :disabled="showForm.series"
           type="info"
           quaternary
         >
@@ -54,6 +55,7 @@
         />
         <n-button
           @click="toggleAddForm('series', true)"
+          :disabled="showForm.pub"
           type="info"
           quaternary
         >
@@ -61,6 +63,7 @@
         </n-button>
       </n-form-item>
       <b-series-form
+        :publisher-id="publisherId"
         @close-add-item-form="toggleAddForm('series', false)"
         @on-ser-add="onNewSeriesAdd"
         class="b-book-modal__add-item"
@@ -87,9 +90,9 @@
       </n-form-item>
       <n-form-item label="Обложка">
         <n-upload
-          list-type="image-card"
+          :action="imUploadUrl"
         >
-          Нажмите для загрузки
+          <n-button>Upload File</n-button>
         </n-upload>
       </n-form-item>
     </n-form>
@@ -103,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Add as AddIcon } from '@vicons/ionicons5';
 import BPublisherForm from '@/components/blocks/global/forms/b-publisher-form.vue';
 import BSeriesForm from '@/components/blocks/global/forms/b-series-form.vue';
@@ -126,7 +129,7 @@ const toggleAddForm = (type, value) => {
 };
 
 const book = ref({
-  series_id: '',
+  series_id: null,
   isSingle: false,
   subtitle: '',
   volume: 1,
@@ -172,11 +175,11 @@ const onNewSeriesAdd = (ser) => {
 const getSeriesByPublisher = async (id) => {
   await bookStore.getSeriesByPublisher(id);
   series.value = bookStore.series.map((el) => ({ label: el.name, value: el._id }));
-  book.value.series_id = series.value.length ? series.value[0].value : '';
+  book.value.series_id = series.value.length ? series.value[0].value : null;
 };
 
 const publishers = ref([]);
-const publisherId = ref('');
+const publisherId = ref(null);
 
 const onNewPubAdded = (pub) => {
   publishers.value.push({ label: pub.name, value: pub._id });
@@ -190,7 +193,7 @@ watch(publisherId, (newVal) => {
 const getPublishers = async () => {
   await bookStore.getPublishers();
   publishers.value = bookStore.publishers.map((el) => ({ label: el.name, value: el._id }));
-  publisherId.value = publishers.value[0].value;
+  publisherId.value = publishers.value.length ? publishers.value[0].value : null;
 
   await getSeriesByPublisher(publisherId.value);
 };
@@ -203,6 +206,7 @@ watch(showModal, (newVal) => {
   }
 });
 
+const imUploadUrl = computed(() => `http://localhost:5000/service/image/${userStore.user._id}`);
 </script>
 
 <style scoped lang="scss">

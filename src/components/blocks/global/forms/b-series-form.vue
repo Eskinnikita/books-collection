@@ -42,11 +42,20 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import {
+  ref, defineEmits, defineProps, toRefs,
+} from 'vue';
 import { validateSeriesFormat } from '@/helpers/validators';
 import { useBookStore } from '@/stores/book';
 
 const emits = defineEmits(['close-add-item-form', 'on-ser-add']);
+const props = defineProps({
+  publisherId: {
+    type: String,
+    required: true,
+  },
+});
+const { publisherId } = toRefs(props);
 const bookStore = useBookStore();
 
 const types = [
@@ -67,6 +76,7 @@ const types = [
 // reg form setup
 const formRef = ref(null);
 const formValue = ref({
+  publisher_id: publisherId.value,
   name: '',
   format: 1,
   type: 1,
@@ -97,6 +107,7 @@ const valRules = {
 // reset form data on login success
 const resetForm = () => {
   formValue.value = {
+    publisher_id: null,
     name: '',
     format: 1,
     type: 1,
