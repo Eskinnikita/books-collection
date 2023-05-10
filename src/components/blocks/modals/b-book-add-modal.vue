@@ -21,7 +21,7 @@
     title="Добавить издание"
     size="huge"
   >
-    <n-form ref="formRef" :rules="valRules">
+    <n-form ref="formRef" :model="book" :rules="valRules">
       <!-- Publisher select -->
       <n-form-item v-if="!showForm.pub" path="publisher_id" label="Издатель">
         <n-select
@@ -70,29 +70,31 @@
         v-else
       />
       <!-- Additional options -->
-      <n-form-item label="Тип издания">
+      <n-form-item label="Тип издания" path="isSingle">
         <n-checkbox v-model:checked="book.isSingle">
           Внесерийное издание (нет номера тома, есть подзаголовок)
         </n-checkbox>
       </n-form-item>
-      <n-form-item path="subtitle" label="Подзаголовок">
+      <n-form-item label="Подзаголовок" path="subtitle">
         <n-input
           v-model:value="book.subtitle"
           placeholder="Отображается через : после названия серии"
         />
       </n-form-item>
-      <n-form-item v-if="!book.isSingle" path="volume" label="Номер тома">
+      <n-form-item v-if="!book.isSingle" label="Номер тома" path="volume">
         <n-input-number
           v-model:value="book.volume"
           placeholder="0,1,2,3,4"
-          path="volume"
           clearable />
       </n-form-item>
-      <n-form-item label="Обложка">
+      <n-form-item label="Обложка" path="cover">
         <n-upload
           :action="imUploadUrl"
+          :max="1"
+          @remove="book.cover = ''"
+          @finish="setUploadedImage"
         >
-          <n-button>Upload File</n-button>
+          <n-button>Загрузить обложку</n-button>
         </n-upload>
       </n-form-item>
     </n-form>
@@ -129,7 +131,8 @@ const toggleAddForm = (type, value) => {
 };
 
 const book = ref({
-  series_id: null,
+  series_id: '',
+  user_id: userStore.user._id,
   isSingle: false,
   subtitle: '',
   volume: 1,
@@ -137,24 +140,41 @@ const book = ref({
 });
 
 const valRules = {
+  series_id: {
+    required: true,
+    message: 'Укажите серию!',
+  },
   volume: [
     {
       type: 'number',
       required: true,
-      message: 'Укажите формат издания!',
+      message: 'Укажите номер тома!',
       trigger: ['blur'],
     },
   ],
 };
 
-const bodyStyle = {
-  width: '800px',
+const resetForm = () => {
+  book.value = {
+    series_id: '',
+    user_id: userStore.user._id,
+    isSingle: false,
+    subtitle: '',
+    volume: 1,
+    cover: '',
+  };
 };
 
 const addBook = () => {
-  formRef.value?.validate(() => {
-    // if (!errors) {
-    // }
+  formRef.value?.validate((errors) => {
+    if (!errors) {
+      bookStore.addBook(book.value)
+        .then(() => {
+          showModal.value = false;
+          resetForm();
+        })
+        .catch(() => {});
+    }
   });
 };
 
@@ -206,7 +226,17 @@ watch(showModal, (newVal) => {
   }
 });
 
-const imUploadUrl = computed(() => `http://localhost:5000/service/image/${userStore.user._id}`);
+const imUploadUrl = computed(() => `${process.env.VUE_APP_API_BASEURL}/service/image/${userStore.user._id}`);
+
+const setUploadedImage = ({ event }) => {
+  const response = event?.target?.response;
+  const resultJson = JSON.parse(response);
+  book.value.cover = resultJson.result ?? '';
+};
+
+const bodyStyle = {
+  width: '800px',
+};
 </script>
 
 <style scoped lang="scss">

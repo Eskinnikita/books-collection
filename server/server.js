@@ -16,12 +16,14 @@ const userRouter = require('./routers/userRouter');
 const pubRouter = require('./routers/pubRouter');
 const seriesRouter = require('./routers/seriesRouter');
 const serviceRouter = require('./routers/serviceRouter');
+const bookRouter = require('./routers/bookRouter');
 
 // Apply entities routers
 app.use('/users', userRouter);
 app.use('/pubs', pubRouter);
 app.use('/series', seriesRouter);
 app.use('/service', serviceRouter);
+app.use('/books', bookRouter);
 
 // Setup server connection
 const port = process.env.PORT || 4000;

@@ -4,6 +4,7 @@ import api from '@/services/api';
 export const useBookStore = defineStore({
   id: 'book',
   state: () => ({
+    books: [],
     publishers: [],
     series: [],
   }),
@@ -11,6 +12,19 @@ export const useBookStore = defineStore({
 
   },
   actions: {
+    async addBook(inData) {
+      try {
+        const response = await api.post('/books', inData);
+        if (response?.result && response?.message) {
+          window.$message.success(response.message);
+          this.books.push(response.result);
+        }
+        return null;
+      } catch (e) {
+        window.$message.error(e.message);
+        throw Error(e);
+      }
+    },
     async addPublisher(inData) {
       try {
         const response = await api.post('/pubs', inData);
