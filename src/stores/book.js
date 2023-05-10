@@ -12,12 +12,24 @@ export const useBookStore = defineStore({
 
   },
   actions: {
+    async getUserBooks(id) {
+      try {
+        const response = await api.get(`/books/${id}`);
+        if (response?.result) {
+          this.books = response.result;
+        }
+        return null;
+      } catch (e) {
+        window.$message.error(e.message);
+        throw Error(e);
+      }
+    },
     async addBook(inData) {
       try {
         const response = await api.post('/books', inData);
         if (response?.result && response?.message) {
           window.$message.success(response.message);
-          this.books.push(response.result);
+          this.books.push(response.result[0]);
         }
         return null;
       } catch (e) {

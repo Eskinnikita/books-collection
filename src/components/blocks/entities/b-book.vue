@@ -1,9 +1,11 @@
 <template>
   <div class="book-container">
-    <div class="book">
+    <div class="book" :class="bookClasses">
       <div class="book__side book__title">
         <div class="book__title-text">
-          <span class="book__title-name">{{ book.title }}</span>
+          <span class="book__title-name">
+            {{ book.series.name }}:{{ book.subtitle }}
+          </span>
           <div class="book__title-volume">
             <span>{{ book.volume }}</span>
           </div>
@@ -17,17 +19,41 @@
 </template>
 
 <script setup>
-import { defineProps, toRefs } from 'vue';
+import { defineProps, toRefs, computed } from 'vue';
 
 const props = defineProps({
   book: Object,
 });
 const { book } = toRefs(props);
+
+const bookClasses = computed(() => {
+  const format = book.value?.series?.format;
+  console.log(format);
+  if (format >= 1 && format < 2) {
+    return 'book--small';
+  } if (format >= 2 && format < 3) {
+    return 'book--med';
+  }
+  return 'book--fat';
+});
 </script>
 
 <style lang="scss" scoped>
 $title-side-width: 30px;
-$title-side-translate: $title-side-width / 2 - 1;
+$title-side-translate: $title-side-width / 2 - 0.5;
+
+@mixin setBookWidth($width, $font-size) {
+  .book__cover {
+    transform: translateZ($width / 2 - 0.5);
+  }
+  .book__title {
+    width: $width;
+    transform: rotateY(-90deg) translateZ($width / 2 - 0.5);
+  }
+  .book__title-name {
+    font-size: $font-size;
+  }
+}
 
 .book-container {
   height: 300px;
@@ -52,8 +78,20 @@ $title-side-translate: $title-side-width / 2 - 1;
   width: 100%;
   transform-style: preserve-3d;
   transition: 0.3s;
-  transform: rotateY(45deg);
+  transform: rotateY(40deg);
   cursor: pointer;
+
+  &--small {
+    @include setBookWidth(30px, 15px);
+  }
+
+  &--med {
+    @include setBookWidth(50px, 18px);
+  }
+
+  &--fat {
+    @include setBookWidth(80px, 21px);
+  }
 
   &__side {
     height: 300px;
@@ -65,7 +103,6 @@ $title-side-translate: $title-side-width / 2 - 1;
     border: 1px solid #cecece;
     background-color: #fff;
     border-radius: 0 4px 4px 0;
-    transform: translateZ($title-side-translate);
   }
 
   &__cover-image {
@@ -78,8 +115,6 @@ $title-side-translate: $title-side-width / 2 - 1;
   &__title {
     display: flex;
     justify-content: flex-end;
-    width: $title-side-width;
-    transform: rotateY(-90deg) translateZ($title-side-translate);
   }
 
   &__title-text {

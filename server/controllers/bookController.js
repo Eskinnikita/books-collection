@@ -5,7 +5,23 @@ const addBook = async (req, res) => {
   try {
     const book = new Book({ ...req.body });
     const newBook = await book.save();
-    return res.json({ message: 'Книга успешно добавлена', result: newBook });
+    const bookWithMeta = await Book.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(newBook.id) },
+      },
+      {
+        $lookup: {
+          from: 'series',
+          localField: 'series_id',
+          foreignField: '_id',
+          as: 'series',
+        },
+      },
+      {
+        $unwind: '$series',
+      },
+    ]);
+    return res.json({ message: 'Книга успешно добавлена', result: bookWithMeta });
   } catch (e) {
     return res.status(500).json({ message: 'Ошибка сервера' });
   }

@@ -98,7 +98,12 @@
         </n-upload>
       </n-form-item>
     </n-form>
-    <n-button @click="addBook" style="width: 100%; margin-bottom: 20px;" type="info">
+    <n-button
+      @click="addBook"
+      :disabled="showForm.pub || showForm.series"
+      style="width: 100%; margin-bottom: 20px;"
+      type="info"
+    >
       Добавить
     </n-button>
     <n-button style="width: 100%" type="text">
