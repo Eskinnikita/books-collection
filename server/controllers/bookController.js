@@ -1,6 +1,20 @@
 const mongoose = require('mongoose');
 const Book = require('../models/Book');
 
+const bookSeriesQuery = [
+  {
+    $lookup: {
+      from: 'series',
+      localField: 'series_id',
+      foreignField: '_id',
+      as: 'series',
+    },
+  },
+  {
+    $unwind: '$series',
+  },
+];
+
 const addBook = async (req, res) => {
   try {
     const book = new Book({ ...req.body });
@@ -9,17 +23,7 @@ const addBook = async (req, res) => {
       {
         $match: { _id: new mongoose.Types.ObjectId(newBook.id) },
       },
-      {
-        $lookup: {
-          from: 'series',
-          localField: 'series_id',
-          foreignField: '_id',
-          as: 'series',
-        },
-      },
-      {
-        $unwind: '$series',
-      },
+      ...bookSeriesQuery,
     ]);
     return res.json({ message: 'Книга успешно добавлена', result: bookWithMeta });
   } catch (e) {
@@ -34,17 +38,7 @@ const getUserBooks = async (req, res) => {
       {
         $match: { user_id: new mongoose.Types.ObjectId(userId) },
       },
-      {
-        $lookup: {
-          from: 'series',
-          localField: 'series_id',
-          foreignField: '_id',
-          as: 'series',
-        },
-      },
-      {
-        $unwind: '$series',
-      },
+      ...bookSeriesQuery,
     ]);
     return res.json({ result: books });
   } catch (e) {

@@ -6,7 +6,7 @@
           <span class="book__title-name">
             {{ book.series.name }}:{{ book.subtitle }}
           </span>
-          <div class="book__title-volume">
+          <div v-if="book.volume && book.volume > -1" class="book__title-volume">
             <span>{{ book.volume }}</span>
           </div>
         </div>
@@ -28,7 +28,6 @@ const { book } = toRefs(props);
 
 const bookClasses = computed(() => {
   const format = book.value?.series?.format;
-  console.log(format);
   if (format >= 1 && format < 2) {
     return 'book--small';
   } if (format >= 2 && format < 3) {
@@ -59,7 +58,7 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   height: 300px;
   width: 200px;
   margin-bottom: 50px;
-  margin-left: -110px;
+  margin-left: -100px;
   perspective: 1000px;
   transition: 0.3s;
 
@@ -78,7 +77,7 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   width: 100%;
   transform-style: preserve-3d;
   transition: 0.3s;
-  transform: rotateY(40deg);
+  transform: rotateY(35deg);
   cursor: pointer;
 
   &--small {
@@ -90,7 +89,7 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   }
 
   &--fat {
-    @include setBookWidth(80px, 21px);
+    @include setBookWidth(60px, 21px);
   }
 
   &__side {
@@ -147,8 +146,6 @@ $title-side-translate: $title-side-width / 2 - 0.5;
     width: 20px;
     height: 20px;
     margin: 10px 0;
-    border: 1px solid #777;
-    border-radius: 50%;
     font-size: 14px;
     font-weight: bold;
   }

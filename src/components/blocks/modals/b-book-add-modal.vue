@@ -84,6 +84,7 @@
       <n-form-item v-if="!book.isSingle" label="Номер тома" path="volume">
         <n-input-number
           v-model:value="book.volume"
+          :validator="(x) => x > -1"
           placeholder="0,1,2,3,4"
           clearable />
       </n-form-item>
@@ -144,6 +145,25 @@ const book = ref({
   cover: '',
 });
 
+watch(() => book.value.series_id, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    const seriesInfo = bookStore.series.find((el) => el._id === newValue);
+    if (seriesInfo?.lastVolume !== null && seriesInfo?.lastVolume > -1) {
+      book.value.volume = seriesInfo.lastVolume + 1;
+      return;
+    }
+    book.value.volume = 1;
+  }
+});
+
+const validateExistedVolume = (rule, value) => {
+  if (book.value.series_id) {
+    const seriesInfo = bookStore.series.find((el) => el._id === book.value.series_id);
+    return !seriesInfo.volumes.includes(value);
+  }
+  return true;
+};
+
 const valRules = {
   series_id: {
     required: true,
@@ -155,6 +175,11 @@ const valRules = {
       required: true,
       message: 'Укажите номер тома!',
       trigger: ['blur'],
+    },
+    {
+      validator: validateExistedVolume,
+      message: 'Том с таким номером уже существует!',
+      trigger: ['blur', 'input'],
     },
   ],
 };

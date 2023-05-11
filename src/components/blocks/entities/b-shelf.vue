@@ -31,7 +31,7 @@ bookStore.getUserBooks(userStore.user._id);
     flex-wrap: wrap;
     box-sizing: border-box;
     width: 100%;
-    padding-left: 185px;
+    padding-left: 175px;
   }
 }
 </style>
