@@ -29,7 +29,7 @@ export const useBookStore = defineStore({
         const response = await api.post('/books', inData);
         if (response?.result && response?.message) {
           window.$message.success(response.message);
-          this.books.push(response.result[0]);
+          await this.getUserBooks(inData.user_id);
         }
         return null;
       } catch (e) {

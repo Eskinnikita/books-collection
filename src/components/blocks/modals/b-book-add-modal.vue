@@ -21,111 +21,130 @@
     title="Добавить издание"
     size="huge"
   >
-    <n-form ref="formRef" :model="book" :rules="valRules">
-      <!-- Publisher select -->
-      <n-form-item v-if="!showForm.pub" path="publisher_id" label="Издатель">
-        <n-select
-          v-model:value="publisherId"
-          :options="publishers"
-          filterable
-          placeholder="Азбука-Аттикус, Истари Комикс и т.д."
+      <div v-show="!showPreview">
+        <n-form ref="formRef" :model="book" :rules="valRules">
+        <!-- Publisher select -->
+        <n-form-item v-if="!showForm.pub" path="publisher_id" label="Издатель">
+          <n-select
+            v-model:value="publisherId"
+            :options="publishers"
+            filterable
+            placeholder="Азбука-Аттикус, Истари Комикс и т.д."
+          />
+          <n-button
+            @click="toggleAddForm('pub', true)"
+            :disabled="showForm.series"
+            type="info"
+            quaternary
+          >
+            Добавить
+          </n-button>
+        </n-form-item>
+        <b-publisher-form
+          @close-add-item-form="toggleAddForm('pub', false)"
+          @on-pub-add="onNewPubAdded"
+          class="b-book-modal__add-item"
+          v-else
         />
+        <!-- Series select -->
+        <n-form-item v-if="!showForm.series" path="series_id" label="Серия">
+          <n-select
+            v-model:value.trim="book.series_id"
+            :options="series"
+            filterable
+            placeholder="Наруто, Bleach, One Piece"
+          />
+          <n-button
+            @click="toggleAddForm('series', true)"
+            :disabled="showForm.pub"
+            type="info"
+            quaternary
+          >
+            Добавить
+          </n-button>
+        </n-form-item>
+        <b-series-form
+          :publisher-id="publisherId"
+          @close-add-item-form="toggleAddForm('series', false)"
+          @on-ser-add="onNewSeriesAdd"
+          class="b-book-modal__add-item"
+          v-else
+        />
+        <!-- Additional options -->
+        <n-form-item label="Тип издания" path="isSingle">
+          <n-checkbox v-model:checked="book.isSingle">
+            Внесерийное издание (нет номера тома, есть подзаголовок)
+          </n-checkbox>
+        </n-form-item>
+        <n-form-item label="Подзаголовок" path="subtitle">
+          <n-input
+            v-model:value.trim="book.subtitle"
+            placeholder="Отображается через : после названия серии"
+          />
+        </n-form-item>
+        <n-form-item v-if="!book.isSingle" label="Номер тома" path="volume">
+          <n-input-number
+            v-model:value.trim="book.volume"
+            :validator="(x) => x > -1"
+            placeholder="0,1,2,3,4"
+            clearable />
+        </n-form-item>
+        <n-form-item label="Обложка" path="cover">
+          <n-upload
+            :action="imUploadUrl"
+            :max="1"
+            @remove="book.cover = ''"
+            @finish="setUploadedImage"
+            @error="showErrorMessage"
+          >
+            <n-button>Загрузить обложку</n-button>
+          </n-upload>
+        </n-form-item>
+        </n-form>
         <n-button
-          @click="toggleAddForm('pub', true)"
-          :disabled="showForm.series"
+          @click="addBook"
+          :disabled="showForm.pub || showForm.series"
+          style="width: 100%; margin-bottom: 20px;"
           type="info"
-          quaternary
         >
           Добавить
         </n-button>
-      </n-form-item>
-      <b-publisher-form
-        @close-add-item-form="toggleAddForm('pub', false)"
-        @on-pub-add="onNewPubAdded"
-        class="b-book-modal__add-item"
-        v-else
-      />
-      <!-- Series select -->
-      <n-form-item v-if="!showForm.series" path="series_id" label="Серия">
-        <n-select
-          v-model:value="book.series_id"
-          :options="series"
-          filterable
-          placeholder="Наруто, Bleach, One Piece"
-        />
         <n-button
-          @click="toggleAddForm('series', true)"
-          :disabled="showForm.pub"
-          type="info"
-          quaternary
+          @click="showPreview = true"
+          :disabled="!book.series_id"
+          style="width: 100%"
+          type="text"
         >
-          Добавить
+          Посмотреть превью
         </n-button>
-      </n-form-item>
-      <b-series-form
-        :publisher-id="publisherId"
-        @close-add-item-form="toggleAddForm('series', false)"
-        @on-ser-add="onNewSeriesAdd"
-        class="b-book-modal__add-item"
-        v-else
-      />
-      <!-- Additional options -->
-      <n-form-item label="Тип издания" path="isSingle">
-        <n-checkbox v-model:checked="book.isSingle">
-          Внесерийное издание (нет номера тома, есть подзаголовок)
-        </n-checkbox>
-      </n-form-item>
-      <n-form-item label="Подзаголовок" path="subtitle">
-        <n-input
-          v-model:value="book.subtitle"
-          placeholder="Отображается через : после названия серии"
-        />
-      </n-form-item>
-      <n-form-item v-if="!book.isSingle" label="Номер тома" path="volume">
-        <n-input-number
-          v-model:value="book.volume"
-          :validator="(x) => x > -1"
-          placeholder="0,1,2,3,4"
-          clearable />
-      </n-form-item>
-      <n-form-item label="Обложка" path="cover">
-        <n-upload
-          :action="imUploadUrl"
-          :max="1"
-          @remove="book.cover = ''"
-          @finish="setUploadedImage"
-        >
-          <n-button>Загрузить обложку</n-button>
-        </n-upload>
-      </n-form-item>
-    </n-form>
-    <n-button
-      @click="addBook"
-      :disabled="showForm.pub || showForm.series"
-      style="width: 100%; margin-bottom: 20px;"
-      type="info"
-    >
-      Добавить
-    </n-button>
-    <n-button style="width: 100%" type="text">
-      Посмотреть превью
-    </n-button>
+      </div>
+    <div class="preview" v-if="showPreview">
+      <b-book :book="book"/>
+      <n-button @click="showPreview = false" style="width: 100%">
+        Вернуться к редактированию
+      </n-button>
+    </div>
   </n-modal>
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue';
 import { Add as AddIcon } from '@vicons/ionicons5';
+import { useMessage } from 'naive-ui';
 import BPublisherForm from '@/components/blocks/global/forms/b-publisher-form.vue';
 import BSeriesForm from '@/components/blocks/global/forms/b-series-form.vue';
+import BBook from '@/components/blocks/entities/b-book.vue';
 import { useUserStore } from '@/stores/user';
 import { useBookStore } from '@/stores/book';
+
+const message = useMessage();
 
 const userStore = useUserStore();
 const bookStore = useBookStore();
 
 const formRef = ref(null);
 const showModal = ref(false);
+const showPreview = ref(false);
 
 const showForm = ref({
   pub: false,
@@ -136,14 +155,18 @@ const toggleAddForm = (type, value) => {
   showForm.value[type] = value;
 };
 
-const book = ref({
-  series_id: '',
+const bookSchema = {
+  series_id: null,
   user_id: userStore.user._id,
   isSingle: false,
   subtitle: '',
   volume: 1,
   cover: '',
-});
+  primaryColor: '#fff',
+  textColor: '#000',
+};
+
+const book = ref(JSON.parse(JSON.stringify(bookSchema)));
 
 watch(() => book.value.series_id, (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -159,7 +182,7 @@ watch(() => book.value.series_id, (newValue, oldValue) => {
 const validateExistedVolume = (rule, value) => {
   if (book.value.series_id) {
     const seriesInfo = bookStore.series.find((el) => el._id === book.value.series_id);
-    return !seriesInfo.volumes.includes(value);
+    return seriesInfo?.volumes?.length ? !seriesInfo.volumes.includes(value) : true;
   }
   return true;
 };
@@ -185,14 +208,7 @@ const valRules = {
 };
 
 const resetForm = () => {
-  book.value = {
-    series_id: '',
-    user_id: userStore.user._id,
-    isSingle: false,
-    subtitle: '',
-    volume: 1,
-    cover: '',
-  };
+  book.value = JSON.parse(JSON.stringify(bookSchema));
 };
 
 const addBook = () => {
@@ -242,15 +258,20 @@ watch(publisherId, (newVal) => {
 
 const getPublishers = async () => {
   await bookStore.getPublishers();
-  publishers.value = bookStore.publishers.map((el) => ({ label: el.name, value: el._id }));
-  publisherId.value = publishers.value.length ? publishers.value[0].value : null;
+  if (bookStore.publishers.length) {
+    publishers.value = bookStore.publishers.map((el) => ({ label: el.name, value: el._id }));
+    publisherId.value = publishers.value.length ? publishers.value[0].value : null;
+  }
 
-  await getSeriesByPublisher(publisherId.value);
+  if (publisherId.value) {
+    await getSeriesByPublisher(publisherId.value);
+  }
 };
 
 watch(showModal, (newVal) => {
   if (newVal === false) {
     clearForm();
+    resetForm();
   } else {
     getPublishers();
   }
@@ -261,8 +282,26 @@ const imUploadUrl = computed(() => `${process.env.VUE_APP_API_BASEURL}/service/i
 const setUploadedImage = ({ event }) => {
   const response = event?.target?.response;
   const resultJson = JSON.parse(response);
-  book.value.cover = resultJson.result ?? '';
+  book.value.cover = resultJson.result.imagePreview ?? '';
+  book.value.primaryColor = resultJson.result.colors.bg ?? '#fff';
+  book.value.textColor = resultJson.result.colors.text ?? '#000';
 };
+
+const showErrorMessage = ({ event }) => {
+  const error = event?.target?.response;
+  const resultJson = JSON.parse(error);
+  message.error(resultJson.message);
+};
+
+// Add series to book on preview show
+watch(showPreview, (newValue) => {
+  if (newValue) {
+    const tempSeries = bookStore.series.find((el) => el._id === book.value.series_id);
+    book.value.series = tempSeries ?? {};
+  } else {
+    delete book.value.series;
+  }
+});
 
 const bodyStyle = {
   width: '800px',
@@ -283,5 +322,12 @@ const bodyStyle = {
     border: 1px solid rgb(215, 215, 215);
     border-radius: 5px;
   }
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px 0;
 }
 </style>

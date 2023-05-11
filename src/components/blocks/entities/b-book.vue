@@ -2,9 +2,13 @@
   <div class="book-container">
     <div class="book" :class="bookClasses">
       <div class="book__side book__title">
-        <div class="book__title-text">
+        <div
+          class="book__title-text"
+          :style="{backgroundColor: book.primaryColor, color: book.textColor}"
+        >
           <span class="book__title-name">
-            {{ book.series.name }}:{{ book.subtitle }}
+            <span>{{ book.series.name }}</span>
+            <span v-if="book.subtitle">:{{ book.subtitle }}</span>
           </span>
           <div v-if="book.volume && book.volume > -1" class="book__title-volume">
             <span>{{ book.volume }}</span>
@@ -12,7 +16,8 @@
         </div>
       </div>
       <div class="book__side book__cover">
-        <img class="book__cover-image" :src="book.cover" alt="cover"/>
+        <img v-if="book.cover" class="book__cover-image" :src="book.cover" alt="cover"/>
+        <div v-else>Обложка не загружена</div>
       </div>
     </div>
   </div>
@@ -23,21 +28,36 @@ import { defineProps, toRefs, computed } from 'vue';
 
 const props = defineProps({
   book: Object,
+  preview: {
+    type: Boolean,
+    default: false,
+  },
 });
-const { book } = toRefs(props);
+const { book, preview } = toRefs(props);
 
 const bookClasses = computed(() => {
+  let classes = '';
   const format = book.value?.series?.format;
   if (format >= 1 && format < 2) {
-    return 'book--small';
+    classes += 'book--small';
   } if (format >= 2 && format < 3) {
-    return 'book--med';
+    classes += 'book--med';
+  } else if (format >= 3) {
+    classes += 'book--fat';
   }
-  return 'book--fat';
+
+  if (preview.value) {
+    classes += ' book-preview';
+  }
+
+  return classes;
 });
 </script>
 
 <style lang="scss" scoped>
+$book-width: 200px;
+$book-height: 300px;
+
 $title-side-width: 30px;
 $title-side-translate: $title-side-width / 2 - 0.5;
 
@@ -55,10 +75,9 @@ $title-side-translate: $title-side-width / 2 - 0.5;
 }
 
 .book-container {
-  height: 300px;
-  width: 200px;
+  height: $book-height;
+  width: $book-width;
   margin-bottom: 50px;
-  margin-left: -100px;
   perspective: 1000px;
   transition: 0.3s;
 
@@ -85,20 +104,23 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   }
 
   &--med {
-    @include setBookWidth(50px, 18px);
+    @include setBookWidth(40px, 18px);
   }
 
   &--fat {
-    @include setBookWidth(60px, 21px);
+    @include setBookWidth(55px, 19px);
   }
 
   &__side {
-    height: 300px;
-    width: 200px;
+    height: $book-height;
+    width: $book-width;
     position: absolute;
   }
 
   &__cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid #cecece;
     background-color: #fff;
     border-radius: 0 4px 4px 0;
@@ -124,7 +146,6 @@ $title-side-translate: $title-side-width / 2 - 0.5;
     width: 100%;
     height: 100%;
     background-color: #fff;
-    border: 1px solid #cecece;
     border-radius: 4px 0 0 4px;
   }
 

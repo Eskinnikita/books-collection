@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
+const Vibrant = require('node-vibrant');
+const tinycolor = require('tinycolor2');
 
 // Authenticate with Yandex OAuth server and obtain an access token
 const accessToken = process.env.YA_DISK_KEY;
@@ -9,10 +11,27 @@ const uploadEndpoint = 'https://cloud-api.yandex.net/v1/disk/resources/upload';
 const publicUrlEndpoint = 'https://cloud-api.yandex.net/v1/disk/resources/publish';
 const folderEndpoint = 'https://cloud-api.yandex.net/v1/disk/resources';
 
+// Get primary and accent color of image
+const getImageColors = async (imageBuffer) => {
+  const vibrant = new Vibrant(imageBuffer);
+  const palette = await vibrant.getPalette();
+  const vibrantColor = palette.Vibrant.getHex();
+  const textColor = tinycolor(vibrantColor).isLight() ? '#000' : '#fff';
+
+  return { bg: vibrantColor, text: textColor };
+};
+
 // Handler function for image upload request
 const uploadImage = async (req, res) => {
   try {
     const userId = req.params.id;
+
+    // Parse file data from FormData
+    const fileName = new Date().valueOf() + req.file.originalname;
+    const fileData = req.file.buffer;
+
+    // Get image color
+    const colors = await getImageColors(fileData);
 
     // Check if user has folder, if not - create
     const userFolderData = await fetch(`${folderEndpoint}?path=/collection/${userId}`, {
@@ -30,10 +49,6 @@ const uploadImage = async (req, res) => {
         },
       });
     }
-
-    // Parse file data from FormData
-    const fileName = new Date().valueOf() + req.file.originalname;
-    const fileData = req.file.buffer;
 
     const formData = new FormData();
     formData.append('file', fileData, fileName);
@@ -76,11 +91,15 @@ const uploadImage = async (req, res) => {
     });
     const saveFileMetaJson = await savedFileMeta.json();
 
+    if (!saveFileMetaJson.preview) {
+      return res.status(400).json({ message: 'Ошибка загрузки. Попробуйте еще раз!' });
+    }
+
     res.send({
-      result: saveFileMetaJson.preview,
+      result: { imagePreview: saveFileMetaJson.preview, colors },
     });
   } catch (e) {
-    return res.status(500).json({ message: 'Ошибка сервера', error: e.message });
+    return res.status(500).json({ message: 'Ошибка загрузки. Попробуйте еще раз!' });
   }
 };
 

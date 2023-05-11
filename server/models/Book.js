@@ -6,6 +6,8 @@ const Book = new Schema({
   subtitle: { type: String },
   volume: { type: String },
   cover: { type: String },
+  primaryColor: { type: String },
+  textColor: { type: String },
   isSingle: { type: Boolean, default: false, required: true },
 });
 
