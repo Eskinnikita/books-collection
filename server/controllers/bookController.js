@@ -40,7 +40,15 @@ const getUserBooks = async (req, res) => {
       },
       ...bookSeriesQuery,
     ]);
-    return res.json({ result: books });
+    const sortedBooks = books.sort((a, b) => {
+      if (a.series.name < b.series.name) return -1;
+      if (a.series.name > b.series.name) return 1;
+
+      if (!a.volume || a.volume < 0) return 1;
+      if (!b.volume || b.volume < 0) return -1;
+      return a.volume - b.volume;
+    });
+    return res.json({ result: sortedBooks });
   } catch (e) {
     return res.status(500).json({ message: 'Ошибка сервера', error: e.message });
   }
