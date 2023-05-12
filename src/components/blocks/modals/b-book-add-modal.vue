@@ -127,7 +127,7 @@
         </n-button>
       </div>
     <div class="preview" v-if="showPreview">
-      <b-book :book="book"/>
+      <b-book :book="book" :preview="true"/>
       <n-button @click="() => showPreview = false" style="width: 100%">
         Вернуться к редактированию
       </n-button>

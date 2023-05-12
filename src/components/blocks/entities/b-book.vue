@@ -1,5 +1,7 @@
 <template>
-  <div class="book-container">
+  <div class="book-container"
+       :class="{'book-container--preview': preview }"
+  >
     <div class="book" :class="bookClasses">
       <div
         class="book__side book__title"
@@ -92,6 +94,12 @@ $title-side-translate: $title-side-width / 2 - 0.5;
     transform: translateX(-40px);
     & > .book {
       transform: rotateY(0) scale(1.15);
+    }
+  }
+
+  &--preview {
+    &:hover {
+      transform: translateX(0px);
     }
   }
 }
