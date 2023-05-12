@@ -101,6 +101,10 @@ $title-side-translate: $title-side-width / 2 - 0.5;
     &:hover {
       transform: translateX(0px);
     }
+
+    .book__cover {
+      border: 1px solid #cecece;
+    }
   }
 }
 
@@ -135,7 +139,6 @@ $title-side-translate: $title-side-width / 2 - 0.5;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #cecece;
     background-color: #fff;
     border-radius: 0 4px 4px 0;
   }
