@@ -10,7 +10,7 @@
             <span>{{ book.series.name }}</span>
             <span v-if="book.subtitle">:{{ book.subtitle }}</span>
           </span>
-          <div v-if="book.volume && book.volume > -1" class="book__title-volume">
+          <div v-if="book.volume && !book.isSingle" class="book__title-volume">
             <span>{{ book.volume }}</span>
           </div>
         </div>

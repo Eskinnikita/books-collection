@@ -50,7 +50,11 @@ const getSeriesByPublisher = async (req, res) => {
           lastVolume: {
             $cond: {
               if: { $gt: [{ $size: '$books' }, 0] },
-              then: { $toInt: { $max: '$books.volume' } },
+              then: {
+                $toInt: {
+                  $max: { $map: { input: '$books', in: { $toInt: '$$this.volume' } } },
+                },
+              },
               else: null,
             },
           },
