@@ -214,6 +214,9 @@ const resetForm = () => {
 const addBook = () => {
   formRef.value?.validate((errors) => {
     if (!errors) {
+      if (book.value.isSingle) {
+        book.value.volume = -1;
+      }
       bookStore.addBook(book.value)
         .then(() => {
           showModal.value = false;
