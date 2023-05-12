@@ -41,8 +41,15 @@ const uploadImage = async (req, res) => {
       },
     });
     const userFolderInfo = await userFolderData.json();
+    // Create user folder and make it public
     if (userFolderInfo.error === 'DiskNotFoundError') {
       await fetch(`${folderEndpoint}?path=/collection/${userId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `OAuth ${accessToken}`,
+        },
+      });
+      await fetch(`${publicUrlEndpoint}?path=/collection/${userId}`, {
         method: 'PUT',
         headers: {
           Authorization: `OAuth ${accessToken}`,
@@ -91,7 +98,7 @@ const uploadImage = async (req, res) => {
     });
     const saveFileMetaJson = await savedFileMeta.json();
 
-    if (!saveFileMetaJson.preview) {
+    if (!saveFileMetaJson?.preview) {
       return res.status(400).json({ message: 'Ошибка загрузки. Попробуйте еще раз!' });
     }
 
@@ -99,10 +106,45 @@ const uploadImage = async (req, res) => {
       result: { imagePreview: saveFileMetaJson.preview, colors },
     });
   } catch (e) {
-    return res.status(500).json({ message: 'Ошибка загрузки. Попробуйте еще раз!' });
+    return res.status(500).json({ message: 'Ошибка загрузки. Попробуйте еще раз!', error: e.message });
+  }
+};
+
+const clientId = process.env.IMGUR_CLIENT_ID;
+
+const uploadImageImgur = async (req, res) => {
+  try {
+    const fileName = new Date().valueOf() + req.file.originalname;
+    const fileData = req.file.buffer;
+
+    const colors = await getImageColors(fileData);
+
+    const formData = new FormData();
+    formData.append('image', fileData, fileName);
+
+    const response = await fetch('https://api.imgur.com/3/upload', {
+      method: 'POST',
+      headers: {
+        Authorization: `Client-ID ${clientId}`,
+        ...formData.getHeaders(),
+      },
+      body: formData,
+    });
+
+    const responseData = await response.json();
+    if (!responseData?.data?.link) {
+      return res.status(400).json({ message: 'Ошибка загрузки. Попробуйте еще раз!' });
+    }
+
+    res.send({
+      result: { imagePreview: responseData.data.link, colors },
+    });
+  } catch (e) {
+    return res.status(500).json({ message: 'Ошибка загрузки. Попробуйте еще раз!', error: e.message });
   }
 };
 
 module.exports = {
   uploadImage,
+  uploadImageImgur,
 };

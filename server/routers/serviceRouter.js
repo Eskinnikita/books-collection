@@ -10,9 +10,16 @@ const upload = multer({
 
 // Upload image to yandex disk
 router.post(
-  '/image/:id',
+  '/image/yandex/:id',
   upload.single('file'),
   controller.uploadImage,
+);
+
+// Upload image to yandex disk
+router.post(
+  '/image/imgur/:id',
+  upload.single('file'),
+  controller.uploadImageImgur,
 );
 
 module.exports = router;

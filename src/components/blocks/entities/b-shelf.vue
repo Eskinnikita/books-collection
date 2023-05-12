@@ -2,6 +2,7 @@
   <div class="shelf">
     <div class="shelf__books-container">
       <book
+        class="shelf__book"
         v-for="(book, index) in bookStore.books"
         :key="index"
         :book="book"
@@ -18,13 +19,19 @@ import { useUserStore } from '@/stores/user';
 const bookStore = useBookStore();
 const userStore = useUserStore();
 
-bookStore.getUserBooks(userStore.user._id);
+if (userStore.user) {
+  bookStore.getUserBooks(userStore.user._id);
+}
 
 </script>
 
 <style lang="scss" scoped>
 .shelf {
   padding: 50px;
+
+  &__book {
+    margin-left: -110px;
+  }
 
   &__books-container {
     display: flex;

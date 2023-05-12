@@ -6,7 +6,7 @@
           class="book__title-text"
           :style="{backgroundColor: book.primaryColor, color: book.textColor}"
         >
-          <span class="book__title-name">
+          <span v-if="book?.series?.name" class="book__title-name">
             <span>{{ book.series.name }}</span>
             <span v-if="book.subtitle">:{{ book.subtitle }}</span>
           </span>

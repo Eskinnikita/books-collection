@@ -110,17 +110,17 @@
           Добавить
         </n-button>
         <n-button
-          @click="showPreview = true"
+          @click="() => showPreview = true"
           :disabled="!book.series_id"
           style="width: 100%"
-          type="text"
+          text
         >
           Посмотреть превью
         </n-button>
       </div>
     <div class="preview" v-if="showPreview">
       <b-book :book="book"/>
-      <n-button @click="showPreview = false" style="width: 100%">
+      <n-button @click="() => showPreview = false" style="width: 100%">
         Вернуться к редактированию
       </n-button>
     </div>
@@ -157,7 +157,7 @@ const toggleAddForm = (type, value) => {
 
 const bookSchema = {
   series_id: null,
-  user_id: userStore.user._id,
+  user_id: userStore.user?._id ?? null,
   isSingle: false,
   subtitle: '',
   volume: 1,
@@ -272,12 +272,13 @@ watch(showModal, (newVal) => {
   if (newVal === false) {
     clearForm();
     resetForm();
+    showPreview.value = false;
   } else {
     getPublishers();
   }
 });
 
-const imUploadUrl = computed(() => `${process.env.VUE_APP_API_BASEURL}/service/image/${userStore.user._id}`);
+const imUploadUrl = computed(() => `${process.env.VUE_APP_API_BASEURL}/service/image/imgur/${userStore.user._id}`);
 
 const setUploadedImage = ({ event }) => {
   const response = event?.target?.response;
