@@ -9,6 +9,7 @@ const Book = new Schema({
   primaryColor: { type: String },
   textColor: { type: String },
   isSingle: { type: Boolean, default: false, required: true },
+  notReleased: { type: Boolean, default: false, required: true },
 });
 
 module.exports = model('Book', Book);

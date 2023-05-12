@@ -1,7 +1,10 @@
 <template>
   <div class="book-container">
     <div class="book" :class="bookClasses">
-      <div class="book__side book__title">
+      <div
+        class="book__side book__title"
+        :class="{'book__title_no-cover': book?.primaryColor === '#fff' }"
+      >
         <div
           class="book__title-text"
           :style="{backgroundColor: book.primaryColor, color: book.textColor}"
@@ -10,7 +13,10 @@
             <span>{{ book.series.name }}</span>
             <span v-if="book.subtitle">:{{ book.subtitle }}</span>
           </span>
-          <div v-if="book.volume && !book.isSingle" class="book__title-volume">
+          <div
+            v-if="book.volume && !book.isSingle"
+            class="book__title-volume"
+          >
             <span>{{ book.volume }}</span>
           </div>
         </div>
@@ -136,6 +142,10 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   &__title {
     display: flex;
     justify-content: flex-end;
+
+    &_no-cover {
+      border: 1px solid #cecece;
+    }
   }
 
   &__title-text {

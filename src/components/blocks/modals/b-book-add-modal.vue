@@ -89,6 +89,14 @@
             placeholder="0,1,2,3,4"
             clearable />
         </n-form-item>
+        <n-form-item
+          label="Наличие"
+          path="notReleased"
+        >
+          <n-checkbox v-model:checked="book.notReleased">
+            Добавить в предзаказы/закладки
+          </n-checkbox>
+        </n-form-item>
         <n-form-item label="Обложка" path="cover">
           <n-upload
             :action="imUploadUrl"
@@ -159,6 +167,7 @@ const bookSchema = {
   series_id: null,
   user_id: userStore.user?._id ?? null,
   isSingle: false,
+  notReleased: false,
   subtitle: '',
   volume: 1,
   cover: '',
