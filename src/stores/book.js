@@ -65,8 +65,10 @@ export const useBookStore = defineStore({
       try {
         const response = await api.post('/series', inData);
         if (response?.result && response?.message) {
+          const newSeries = response.result;
+          this.series.push(newSeries);
           window.$message.success(response.message);
-          return response.result;
+          return newSeries;
         }
         return null;
       } catch (e) {

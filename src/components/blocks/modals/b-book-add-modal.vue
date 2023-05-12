@@ -301,6 +301,7 @@ const showErrorMessage = ({ event }) => {
 watch(showPreview, (newValue) => {
   if (newValue) {
     const tempSeries = bookStore.series.find((el) => el._id === book.value.series_id);
+    console.log(tempSeries);
     book.value.series = tempSeries ?? {};
   } else {
     delete book.value.series;
