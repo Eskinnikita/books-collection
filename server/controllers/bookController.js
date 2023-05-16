@@ -36,7 +36,10 @@ const getUserBooks = async (req, res) => {
     const userId = req.params.id;
     const books = await Book.aggregate([
       {
-        $match: { user_id: new mongoose.Types.ObjectId(userId) },
+        $match: {
+          user_id: new mongoose.Types.ObjectId(userId),
+          notReleased: false,
+        },
       },
       ...bookSeriesQuery,
     ]);

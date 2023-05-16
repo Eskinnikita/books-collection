@@ -5,6 +5,7 @@ export const useBookStore = defineStore({
   id: 'book',
   state: () => ({
     books: [],
+    openedBookId: '',
     publishers: [],
     series: [],
   }),

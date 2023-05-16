@@ -1,7 +1,8 @@
 <template>
   <div class="book-container"
-       :class="{'book-container--preview': preview }"
+       :class="{'book-container--preview': preview, 'opened': isBookOpened }"
   >
+    <b-book-controls class="book-container__controls" v-if="isBookOpened"/>
     <div class="book" :class="bookClasses">
       <div
         class="book__side book__title"
@@ -11,10 +12,10 @@
           class="book__title-text"
           :style="{backgroundColor: book.primaryColor, color: book.textColor}"
         >
-          <span v-if="book?.series?.name" class="book__title-name">
-            <span>{{ book.series.name }}</span>
-            <span v-if="book.subtitle">:{{ book.subtitle }}</span>
-          </span>
+        <span v-if="book?.series?.name" class="book__title-name">
+          <span>{{ book.series.name }}</span>
+          <span v-if="book.subtitle">:{{ book.subtitle }}</span>
+        </span>
           <div
             v-if="book.volume && !book.isSingle"
             class="book__title-volume"
@@ -33,6 +34,10 @@
 
 <script setup>
 import { defineProps, toRefs, computed } from 'vue';
+import { useBookStore } from '@/stores/book';
+import BBookControls from '@/components/blocks/entities/b-book-controls.vue';
+
+const bookStore = useBookStore();
 
 const props = defineProps({
   book: Object,
@@ -60,6 +65,8 @@ const bookClasses = computed(() => {
 
   return classes;
 });
+
+const isBookOpened = computed(() => book?.value?._id === bookStore.openedBookId);
 </script>
 
 <style lang="scss" scoped>
@@ -87,9 +94,9 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   width: $book-width;
   margin-bottom: 50px;
   perspective: 1000px;
-  transition: 0.3s;
+  transition: 0.5s;
 
-  &:hover {
+  &:not(.opened):hover {
     z-index: 9999;
     transform: translateX(-40px);
     & > .book {
@@ -98,13 +105,29 @@ $title-side-translate: $title-side-width / 2 - 0.5;
   }
 
   &--preview {
-    &:hover {
-      transform: translateX(0px);
-    }
-
     .book__cover {
       border: 1px solid #cecece;
     }
+  }
+
+  &__controls {
+    position: absolute;
+    top: 0;
+    left: -30px;
+  }
+}
+
+.opened {
+  transition: 0s;
+  z-index: 99999999;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-left: 0 !important;
+  transform: translate(-50%, -50%) scale(2);
+
+  & > .book {
+    transform: rotateY(0);
   }
 }
 

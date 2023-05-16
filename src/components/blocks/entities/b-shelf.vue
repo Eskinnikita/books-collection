@@ -6,6 +6,7 @@
         v-for="(book, index) in bookStore.books"
         :key="index"
         :book="book"
+        @click="setOpenedBook(book._id)"
       />
     </div>
   </div>
@@ -22,6 +23,10 @@ const userStore = useUserStore();
 if (userStore.user) {
   bookStore.getUserBooks(userStore.user._id);
 }
+
+const setOpenedBook = (id) => {
+  bookStore.openedBookId = id;
+};
 
 </script>
 
